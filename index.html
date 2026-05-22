@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WALTH · Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&family=Italiana&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: ["class"],
+      theme: {
+        container: { center: true, padding: "2rem", screens: { "2xl": "1400px" } },
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+            display: ['"Space Grotesk"', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            border: "hsl(var(--border))",
+            input: "hsl(var(--input))",
+            ring: "hsl(var(--ring))",
+            background: "hsl(var(--background))",
+            foreground: "hsl(var(--foreground))",
+            glow: "hsl(var(--glow))",
+            primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))" },
+            secondary: { DEFAULT: "hsl(var(--secondary))", foreground: "hsl(var(--secondary-foreground))" },
+            destructive: { DEFAULT: "hsl(var(--destructive))", foreground: "hsl(var(--destructive-foreground))" },
+            muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))" },
+            accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" },
+            popover: { DEFAULT: "hsl(var(--popover))", foreground: "hsl(var(--popover-foreground))" },
+            card: { DEFAULT: "hsl(var(--card))", foreground: "hsl(var(--card-foreground))" },
+          },
+          borderRadius: {
+            lg: "var(--radius)",
+            md: "calc(var(--radius) - 2px)",
+            sm: "calc(var(--radius) - 4px)",
+          },
+          keyframes: {
+            "fade-up": { "0%": { opacity: "0", transform: "translateY(16px)" }, "100%": { opacity: "1", transform: "translateY(0)" } },
+            "pulse-glow": { "0%,100%": { opacity: "0.6" }, "50%": { opacity: "1" } },
+            "blink": { "0%,50%": { opacity: "1" }, "50.01%,100%": { opacity: "0" } },
+            "float": { "0%,100%": { transform: "translateY(0)" }, "50%": { transform: "translateY(-8px)" } },
+          },
+          animation: {
+            "fade-up": "fade-up 0.7s ease-out both",
+            "pulse-glow": "pulse-glow 3s ease-in-out infinite",
+            "blink": "blink 1s step-end infinite",
+            "float": "float 6s ease-in-out infinite",
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    :root {
+      --background: 0 0% 0%;
+      --foreground: 270 20% 96%;
+      --card: 260 20% 4%;
+      --card-foreground: 270 20% 96%;
+      --popover: 260 20% 4%;
+      --popover-foreground: 270 20% 96%;
+      --primary: 270 20% 98%;
+      --primary-foreground: 260 30% 6%;
+      --secondary: 260 18% 9%;
+      --secondary-foreground: 270 20% 96%;
+      --muted: 260 15% 8%;
+      --muted-foreground: 265 15% 65%;
+      --accent: 260 85% 70%;
+      --accent-foreground: 0 0% 0%;
+      --indigo: 240 80% 60%;
+      --lilac: 275 90% 80%;
+      --glow: 265 90% 72%;
+      --destructive: 0 72% 55%;
+      --destructive-foreground: 270 20% 98%;
+      --border: 260 25% 12%;
+      --input: 260 25% 12%;
+      --ring: 260 85% 70%;
+      --radius: 0.75rem;
+      --gradient-hero:
+        radial-gradient(ellipse at 20% 10%, hsl(240 80% 45% / 0.35), transparent 55%),
+        radial-gradient(ellipse at 80% 90%, hsl(275 90% 65% / 0.28), transparent 55%),
+        radial-gradient(ellipse at 50% 50%, hsl(260 85% 50% / 0.15), transparent 70%);
+      --gradient-text:
+        linear-gradient(135deg, hsl(270 20% 98%), hsl(260 85% 78%) 50%, hsl(240 80% 70%));
+      --gradient-brand:
+        linear-gradient(135deg, hsl(var(--indigo)), hsl(var(--accent)), hsl(var(--lilac)));
+      --shadow-glow: 0 0 60px hsl(var(--accent) / 0.45);
+      --shadow-card: 0 10px 40px -12px hsl(240 80% 30% / 0.4);
+    }
+
+    * { border-color: hsl(var(--border)); }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: #000;
+      color: hsl(var(--foreground));
+      font-family: 'Inter', ui-sans-serif, system-ui;
+      font-feature-settings: "ss01", "cv11";
+    }
+    ::selection { background: hsl(var(--accent) / 0.35); color: hsl(var(--foreground)); }
+
+    .text-gradient {
+      background: var(--gradient-text);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .text-gradient-brand {
+      background: var(--gradient-brand);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .terminal-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-radius: 9999px;
+      border: 1px solid hsl(var(--border));
+      background-color: hsl(var(--secondary) / 0.6);
+      padding: 0.5rem 1rem;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.875rem;
+      color: hsl(var(--muted-foreground));
+      backdrop-filter: blur(12px);
+    }
+    .glass {
+      border: 1px solid hsl(var(--border) / 0.6);
+      background-color: hsl(var(--card) / 0.4);
+      backdrop-filter: blur(24px);
+    }
+    .glow-ring {
+      box-shadow: var(--shadow-glow);
+    }
+    .font-feminine {
+      font-family: 'Italiana', 'Cormorant Garamond', serif;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+    }
+    .text-shimmer {
+      background: linear-gradient(
+        100deg,
+        hsl(0 0% 100%) 0%,
+        hsl(0 0% 100%) 35%,
+        hsl(260 85% 88%) 45%,
+        hsl(0 0% 100%) 55%,
+        hsl(0 0% 100%) 100%
+      );
+      background-size: 250% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shimmer 4.5s linear infinite;
+      filter: drop-shadow(0 0 24px hsl(260 85% 75% / 0.35));
+    }
+    .btn-glow {
+      position: relative;
+      color: hsl(var(--foreground)) !important;
+      transition: box-shadow 0.35s ease, background-color 0.35s ease, transform 0.35s ease;
+    }
+    .btn-glow:hover {
+      color: hsl(var(--foreground)) !important;
+      background-color: hsl(var(--secondary) / 0.6) !important;
+      box-shadow:
+        0 0 24px hsl(var(--accent) / 0.5),
+        0 0 60px hsl(var(--glow) / 0.4);
+    }
+    .cursor-nav {
+      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'><defs><radialGradient id='g' cx='50%25' cy='50%25' r='50%25'><stop offset='0%25' stop-color='%23d8b4fe' stop-opacity='1'/><stop offset='40%25' stop-color='%23a78bfa' stop-opacity='0.9'/><stop offset='100%25' stop-color='%236366f1' stop-opacity='0'/></radialGradient></defs><circle cx='14' cy='14' r='12' fill='url(%23g)'/><circle cx='14' cy='14' r='3' fill='%23ffffff'/></svg>") 14 14, auto;
+    }
+    .btn-grad-border {
+      position: relative;
+      border: 1px solid transparent !important;
+      background-clip: padding-box;
+      color: hsl(var(--foreground)) !important;
+      transition: transform 0.3s ease;
+    }
+    .btn-grad-border::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 9999px;
+      padding: 1px;
+      background: linear-gradient(120deg,
+        hsl(var(--indigo)),
+        hsl(var(--accent)),
+        hsl(var(--lilac)),
+        hsl(var(--indigo)));
+      background-size: 300% 300%;
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      animation: grad-border 6s linear infinite;
+      pointer-events: none;
+    }
+    .btn-grad-border:hover {
+      color: hsl(var(--foreground)) !important;
+      background-color: hsl(var(--secondary) / 0.6) !important;
+    }
+    @keyframes grad-border {
+      0%   { background-position: 0% 50%; }
+      100% { background-position: 300% 50%; }
+    }
+    @keyframes shimmer {
+      0%   { background-position: 200% 50%; }
+      100% { background-position: -100% 50%; }
+    }
+    .font-mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .bg-hero { background-image: var(--gradient-hero); }
+    .bg-brand { background-image: var(--gradient-brand); }
+    .scanline {
+      background-image: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        hsl(var(--foreground) / 0.02) 2px,
+        hsl(var(--foreground) / 0.02) 3px
+      );
+    }
+  </style>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef, forwardRef } = React;
+
+    // Icons as SVG components
+    const IconCode2 = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <polyline points="16 18 22 12 16 6"></polyline>
+        <polyline points="8 6 2 12 8 18"></polyline>
+      </svg>
+    );
+
+    const IconArrowUpRight = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M7 17L17 7"></path>
+        <path d="M7 7h10v10"></path>
+      </svg>
+    );
+
+    const IconGithub = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
+        <path d="M9 18c-4.51 2-5-2-7-2"></path>
+      </svg>
+    );
+
+    const IconSend = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="m22 2-7 20-4-9-9-4Z"></path>
+        <path d="M22 2 11 13"></path>
+      </svg>
+    );
+
+    const IconTerminal = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <polyline points="4 17 10 11 4 5"></polyline>
+        <line x1="12" x2="20" y1="19" y2="19"></line>
+      </svg>
+    );
+
+    const IconServer = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <rect width="20" height="8" x="2" y="2" rx="2" ry="2"></rect>
+        <rect width="20" height="8" x="2" y="14" rx="2" ry="2"></rect>
+        <line x1="6" x2="6.01" y1="6" y2="6"></line>
+        <line x1="6" x2="6.01" y1="18" y2="18"></line>
+      </svg>
+    );
+
+    const IconCpu = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+        <rect x="9" y="9" width="6" height="6"></rect>
+        <path d="M15 2v2"></path>
+        <path d="M15 20v2"></path>
+        <path d="M2 15h2"></path>
+        <path d="M2 9h2"></path>
+        <path d="M20 15h2"></path>
+        <path d="M20 9h2"></path>
+        <path d="M9 2v2"></path>
+        <path d="M9 20v2"></path>
+      </svg>
+    );
+
+    const IconBoxes = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+      </svg>
+    );
+
+    const IconSparkles = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path>
+        <path d="M5 3v4"></path>
+        <path d="M19 17v4"></path>
+        <path d="M3 5h4"></path>
+        <path d="M17 19h4"></path>
+      </svg>
+    );
+
+    const IconMousePointer2 = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="m4 4 7.07 17 2.51-7.39L21 11.07z"></path>
+      </svg>
+    );
+
+    const IconInstagram = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+        <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
+      </svg>
+    );
+
+    const IconMessageCircle = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"></path>
+      </svg>
+    );
+
+    // Button Component
+    const Button = forwardRef(({ className, variant = "default", size = "default", asChild = false, ...props }, ref) => {
+      const baseClasses = "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
+      
+      const variants = {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+      };
+      
+      const sizes = {
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-md px-3",
+        lg: "h-11 rounded-md px-8",
+        icon: "h-10 w-10",
+      };
+      
+      const Comp = asChild ? "a" : "button";
+      return <Comp className={`${baseClasses} ${variants[variant]} ${sizes[size]} ${className || ''}`} ref={ref} {...props} />;
+    });
+    Button.displayName = "Button";
+
+    // Typewriter Component
+    const Typewriter = () => {
+      const lines = [
+        "I build websites, servers & resilient systems.",
+        "I ship fast UIs and calm infrastructure.",
+        "I design software that stays out of the way.",
+      ];
+      const [i, setI] = useState(0);
+      const [text, setText] = useState("");
+      const [del, setDel] = useState(false);
+
+      useEffect(() => {
+        const current = lines[i % lines.length];
+        const speed = del ? 30 : 55;
+        const t = setTimeout(() => {
+          if (!del) {
+            const next = current.slice(0, text.length + 1);
+            setText(next);
+            if (next === current) setTimeout(() => setDel(true), 1400);
+          } else {
+            const next = current.slice(0, text.length - 1);
+            setText(next);
+            if (next === "") {
+              setDel(false);
+              setI((n) => n + 1);
+            }
+          }
+        }, speed);
+        return () => clearTimeout(t);
+      }, [text, del, i]);
+
+      return (
+        <span className="font-mono text-sm md:text-base">
+          <span className="text-accent">&gt;_</span> {text}
+          <span className="ml-0.5 inline-block h-4 w-[2px] translate-y-0.5 bg-foreground animate-blink"></span>
+        </span>
+      );
+    };
+
+    // Discord Profile Component with Lanyard integration
+    const DiscordProfile = () => {
+      const [status, setStatus] = useState({
+        avatar: "https://images-ext-1.discordapp.net/external/YqmWN0MyiIGpV3LKgDdMT1Csp1ko4hWQOHLm9Xs9uKA/%3Fsize%3D1024/https/cdn.discordapp.com/avatars/1332010581913239653/4ad68a384e1d531c6db12bad3a688a99.png?format=webp&quality=lossless",
+        status: "online",
+        activity: null
+      });
+
+      useEffect(() => {
+        const userId = "YOUR_DISCORD_USER_ID"; // Replace with your actual Discord user ID
+        const socket = new WebSocket("wss://api.lanyard.rest/socket");
+        
+        socket.onopen = () => {
+          socket.send(JSON.stringify({ op: 2, d: { subscribe_to_id: userId } }));
+        };
+
+        socket.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          if (data.op === 1) {
+            socket.send(JSON.stringify({ op: 3 }));
+          } else if (data.op === 0) {
+            const discordData = data.d;
+            const avatar = discordData.discord_user.avatar
+              ? `https://cdn.discordapp.com/avatars/${userId}/${discordData.discord_user.avatar}.png?size=512`
+              : `https://cdn.discordapp.com/embed/avatars/${discordData.discord_user.discriminator % 5}.png`;
+            
+            setStatus({
+              avatar,
+              status: discordData.discord_status,
+              activity: discordData.activities?.[0] || null
+            });
+          }
+        };
+
+        return () => socket.close();
+      }, []);
+
+      const statusColors = {
+        online: "bg-emerald-400",
+        idle: "bg-yellow-400",
+        dnd: "bg-red-400",
+        offline: "bg-gray-400"
+      };
+
+      return (
+        <div className="relative animate-float">
+          <div className="absolute inset-0 -z-10 blur-3xl">
+            <div className="mx-auto h-full w-full rounded-full bg-brand opacity-40"></div>
+          </div>
+          <div className="relative flex h-36 w-36 items-center justify-center rounded-full p-[2px] md:h-40 md:w-40">
+            <div className="absolute inset-0 rounded-full bg-brand opacity-80 blur-[2px]"></div>
+            <div className="relative h-full w-full overflow-visible rounded-full bg-black">
+              <img
+                src={status.avatar}
+                alt="Discord avatar"
+                width={512}
+                height={512}
+                className="absolute inset-0 h-full w-full rounded-full object-cover"
+              />
+              <span
+                className={`absolute bottom-1 right-1 block h-4 w-4 rounded-full ring-4 ring-black ${statusColors[status.status]}`}
+                title={status.status}
+              ></span>
+            </div>
+          </div>
+          <div className="mt-3 text-center font-mono text-xs text-muted-foreground">
+            @waltharist
+          </div>
+        </div>
+      );
+    };
+
+    // Constellation Component
+    const Constellation = () => {
+      const canvasRef = useRef(null);
+      const mouse = useRef({ x: -9999, y: -9999 });
+
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
+        let raf = 0;
+        let width = 0;
+        let height = 0;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        let points = [];
+
+        const resize = () => {
+          width = canvas.clientWidth;
+          height = canvas.clientHeight;
+          canvas.width = width * dpr;
+          canvas.height = height * dpr;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+          const density = Math.floor((width * height) / 14000);
+          points = Array.from({ length: Math.min(Math.max(density, 40), 140) }, () => ({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            vx: (Math.random() - 0.5) * 0.25,
+            vy: (Math.random() - 0.5) * 0.25,
+            r: Math.random() * 1.4 + 0.4,
+            hue: 190 + Math.random() * 80,
+          }));
+        };
+
+        const onMove = (e) => {
+          const rect = canvas.getBoundingClientRect();
+          mouse.current.x = e.clientX - rect.left;
+          mouse.current.y = e.clientY - rect.top;
+        };
+        const onLeave = () => {
+          mouse.current.x = -9999;
+          mouse.current.y = -9999;
+        };
+
+        const tick = () => {
+          ctx.clearRect(0, 0, width, height);
+
+          for (const p of points) {
+            p.x += p.vx;
+            p.y += p.vy;
+            if (p.x < -10) p.x = width + 10;
+            if (p.x > width + 10) p.x = -10;
+            if (p.y < -10) p.y = height + 10;
+            if (p.y > height + 10) p.y = -10;
+
+            const dx = mouse.current.x - p.x;
+            const dy = mouse.current.y - p.y;
+            const d2 = dx * dx + dy * dy;
+            if (d2 < 22500) {
+              const f = (1 - d2 / 22500) * 0.02;
+              p.vx += dx * f * 0.01;
+              p.vy += dy * f * 0.01;
+            }
+            p.vx *= 0.995;
+            p.vy *= 0.995;
+          }
+
+          for (let i = 0; i < points.length; i++) {
+            for (let j = i + 1; j < points.length; j++) {
+              const a = points[i];
+              const b = points[j];
+              const dx = a.x - b.x;
+              const dy = a.y - b.y;
+              const d = Math.sqrt(dx * dx + dy * dy);
+              if (d < 130) {
+                const alpha = (1 - d / 130) * 0.35;
+                ctx.strokeStyle = `hsla(${(a.hue + b.hue) / 2}, 90%, 70%, ${alpha})`;
+                ctx.lineWidth = 0.6;
+                ctx.beginPath();
+                ctx.moveTo(a.x, a.y);
+                ctx.lineTo(b.x, b.y);
+                ctx.stroke();
+              }
+            }
+          }
+
+          for (const p of points) {
+            ctx.fillStyle = `hsla(${p.hue}, 95%, 75%, 0.9)`;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          raf = requestAnimationFrame(tick);
+        };
+
+        resize();
+        tick();
+        window.addEventListener("resize", resize);
+        window.addEventListener("mousemove", onMove);
+        window.addEventListener("mouseleave", onLeave);
+        return () => {
+          cancelAnimationFrame(raf);
+          window.removeEventListener("resize", resize);
+          window.removeEventListener("mousemove", onMove);
+          window.removeEventListener("mouseleave", onLeave);
+        };
+      }, []);
+
+      return (
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <canvas ref={canvasRef} className="h-full w-full"></canvas>
+          <div className="absolute inset-0 bg-hero"></div>
+          <div className="absolute inset-0 scanline opacity-40"></div>
+        </div>
+      );
+    };
+
+    // Nav Component
+    const Nav = () => {
+      const links = [
+        { href: "#about", label: "about" },
+        { href: "#work", label: "work" },
+        { href: "#stack", label: "stack" },
+        { href: "#contact", label: "contact" },
+      ];
+      return (
+        <header className="fixed left-1/2 top-4 z-50 -translate-x-1/2 px-4">
+          <nav className="glass flex items-center gap-3 rounded-full px-3 py-2 shadow-[0_8px_30px_rgba(0,0,0,0.4)]">
+            <a href="#top" className="flex items-center gap-2 rounded-full bg-secondary px-3 py-1.5 font-mono text-sm font-semibold">
+              <IconCode2 className="h-4 w-4 text-accent" />
+              <span className="tracking-widest">WALTH</span>
+            </a>
+            <ul className="hidden items-center gap-1 px-2 font-mono text-sm text-muted-foreground md:flex">
+              {links.map((l) => (
+                <li key={l.href}>
+                  <a href={l.href} className="rounded-full px-3 py-1.5 transition-colors hover:bg-secondary hover:text-foreground">
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <div className="hidden items-center gap-2 rounded-full bg-secondary px-3 py-1.5 font-mono text-xs text-muted-foreground sm:flex">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-pulse-glow rounded-full bg-emerald-400/70"></span>
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400"></span>
+              </span>
+              available
+            </div>
+          </nav>
+        </header>
+      );
+    };
+
+    // Main App Component
+    const App = () => {
+      const projects = [
+        {
+          name: "Fren's",
+          status: "live",
+          blurb: "A Discord Server where you can get free skripts,plugins",
+          stack: ["discord"],
+          href: "https://discord.gg/z5ThjPSMBp",
+          cta: "Join Server",
+          featured: true,
+        },
+        {
+          name: "FrenNPC",
+          status: "live",
+          blurb: "Minecraft npc plugin",
+          stack: ["Maven"],
+          href: "https://github.com/waltharist/FrenNPC",
+          cta: "View GitHub",
+          featured: true,
+        },
+        {
+          name: "FrenBOT",
+          status: "live",
+          blurb: "My Discord Bot",
+          stack: ["python"],
+          href: "https://github.com/waltharist/FrenBOT",
+          cta: "View GitHub",
+          featured: false,
+        },
+      ];
+
+      const stats = [
+        { value: "3.5+", label: "Years Exp." },
+        { value: "20", label: "Years Old" },
+        { value: "10+", label: "Projects" },
+        { value: "30", label: "Clients" },
+      ];
+
+      const stack = [
+        { icon: IconTerminal, label: "Python", note: "discord bot" },
+        { icon: IconBoxes, label: "React / Next / HTML", note: "UI layer" },
+        { icon: IconServer, label: "Node · Go · Rust", note: "services" },
+        { icon: IconCpu, label: "Postgres · Redis", note: "data" },
+        { icon: IconSparkles, label: "GLSL · Canvas", note: "motion" },
+        { icon: IconSend, label: "Minecraft", note: "minecraft mods/plugins" },
+      ];
+
+      return (
+        <div id="top" className="relative min-h-screen overflow-x-hidden bg-background text-foreground">
+          <Nav />
+
+          {/* HERO */}
+          <section className="relative flex min-h-screen items-center justify-center px-6 pt-28">
+            <Constellation />
+            <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center text-center animate-fade-up">
+              <div className="mb-8">
+                <DiscordProfile />
+              </div>
+
+              <h1 className="font-feminine text-7xl tracking-[0.14em] md:text-9xl">
+                <span className="text-shimmer">WALTH</span>
+              </h1>
+
+              <div className="mt-6 terminal-chip">
+                <Typewriter />
+              </div>
+
+              <p className="mx-auto mt-6 max-w-xl text-balance text-muted-foreground md:text-lg">
+                Independent engineer crafting web products, internal tools, and the
+                quiet infrastructure that keeps them alive at 3am.
+              </p>
+
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+                <Button asChild size="lg" className="rounded-full bg-foreground text-background hover:bg-foreground/90">
+                  <a href="#work">
+                    See selected work <IconArrowUpRight className="ml-1 h-4 w-4" />
+                  </a>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="btn-grad-border rounded-full bg-secondary/50 backdrop-blur">
+                  <a href="#contact">
+                    <IconSend className="mr-2 h-4 w-4" /> Start a project
+                  </a>
+                </Button>
+              </div>
+
+              <div className="mt-16 flex items-center gap-2 font-mono text-xs text-muted-foreground">
+                <IconMousePointer2 className="h-3 w-3" /> scroll to descend
+              </div>
+            </div>
+          </section>
+
+          {/* ABOUT */}
+          <section id="about" className="cursor-nav relative mx-auto max-w-6xl px-6 py-32">
+            <div className="flex items-center gap-3 font-mono text-xs tracking-[0.2em] text-accent">
+              <span className="h-px w-8 bg-accent"></span> ABOUT ME
+            </div>
+
+            <div className="mt-10 grid gap-6 md:grid-cols-2">
+              <div className="relative overflow-hidden rounded-2xl border border-accent/30 bg-card/60 p-8 shadow-[0_0_60px_-20px_hsl(var(--accent)/0.6)] backdrop-blur md:p-10">
+                <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent"></div>
+                <h2 className="font-display text-3xl font-semibold md:text-4xl">
+                  Hey, I'm <span className="text-foreground">Walthari</span>.
+                </h2>
+                <p className="mt-6 text-muted-foreground">
+                  I'm a graphic designer, web developer, and Discord bot builder.
+                  I love blending careful visual design with clean code — brand
+                  systems, polished interfaces, and bots that feel considered down
+                  to the last detail.
+                </p>
+                <p className="mt-4 text-muted-foreground">
+                  Right now I'm focused on crafting calm, fast web experiences and
+                  custom tooling for communities — things that stay out of the way
+                  and just feel good to use.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                {stats.map((s) => (
+                  <div
+                    key={s.label}
+                    className="group relative overflow-hidden rounded-2xl border border-border bg-card/50 p-6 transition-all hover:border-accent/40 hover:shadow-[0_0_60px_-25px_hsl(var(--accent)/0.8)] md:p-8"
+                  >
+                    <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-accent/10 opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100"></div>
+                    <div className="relative">
+                      <div className="font-display text-4xl font-semibold tracking-tight md:text-5xl">
+                        {s.value}
+                      </div>
+                      <div className="mt-2 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                        {s.label}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* WORK */}
+          <section id="work" className="cursor-nav relative mx-auto max-w-6xl px-6 py-32">
+            <div className="flex items-center gap-3 font-mono text-xs tracking-[0.2em] text-accent">
+              <span className="h-px w-8 bg-accent"></span> FEATURED WORK
+            </div>
+
+            <div className="mt-10 grid gap-6 md:grid-cols-2">
+              {projects.map((p) => (
+                <a
+                  key={p.name}
+                  href={p.href}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className={`group relative overflow-hidden rounded-2xl border bg-card/50 p-8 transition-all hover:bg-card ${
+                    p.featured
+                      ? "border-accent/40 shadow-[0_0_60px_-25px_hsl(var(--accent)/0.8)]"
+                      : "border-border"
+                  } ${!p.featured ? "md:col-span-2" : ""}`}
+                >
+                  <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-accent/10 opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100"></div>
+                  <div className="relative">
+                    <div className="flex items-start justify-between gap-4">
+                      <h3 className="font-display text-2xl font-semibold text-foreground md:text-3xl">
+                        {p.name}
+                      </h3>
+                      <span
+                        className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-xs ${
+                          p.status === "live"
+                            ? "border-accent/40 bg-accent/10 text-accent"
+                            : "border-border bg-secondary/60 text-muted-foreground"
+                        }`}
+                      >
+                        <span
+                          className={`h-1.5 w-1.5 rounded-full ${
+                            p.status === "live" ? "bg-accent animate-pulse-glow" : "bg-muted-foreground"
+                          }`}
+                        ></span>
+                        {p.status === "live" ? "LIVE" : "UPCOMING"}
+                      </span>
+                    </div>
+                    <p className="mt-4 text-muted-foreground">{p.blurb}</p>
+                    <div className="mt-6 flex flex-wrap gap-2">
+                      {p.stack.map((s) => (
+                        <span key={s} className="rounded-md border border-border bg-secondary/60 px-3 py-1 font-mono text-xs text-muted-foreground">
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="mt-8 inline-flex items-center gap-1.5 font-medium text-foreground">
+                      {p.cta}
+                      <IconArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+
+          {/* STACK */}
+          <section id="stack" className="cursor-nav relative mx-auto max-w-6xl px-6 py-32">
+            <div className="flex items-center gap-3 font-mono text-sm text-accent">
+              <span className="h-px w-8 bg-accent"></span> 03 · stack
+            </div>
+            <h2 className="mt-4 font-display text-4xl font-semibold md:text-5xl">
+              Tools I reach for.
+            </h2>
+
+            <div className="mt-12 grid grid-cols-2 gap-3 md:grid-cols-3">
+              {stack.map(({ icon: Icon, label, note }) => (
+                <div
+                  key={label}
+                  className="group flex items-center gap-4 rounded-xl border border-border bg-card/40 p-5 transition-colors"
+                >
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-accent">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <div className="font-medium">{label}</div>
+                    <div className="font-mono text-xs text-muted-foreground">{note}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* CONTACT */}
+          <section id="contact" className="cursor-nav relative mx-auto max-w-4xl px-6 py-32">
+            <div className="flex items-center gap-3 font-mono text-sm text-accent">
+              <span className="h-px w-8 bg-accent"></span> 04 · contact
+            </div>
+            <div className="mt-6 overflow-hidden rounded-3xl border border-border bg-card/60 p-10 md:p-16">
+              <h2 className="font-display text-4xl font-semibold leading-tight md:text-6xl">
+                Got something <span className="text-gradient-brand">worth building?</span>
+              </h2>
+              <p className="mt-6 max-w-xl text-muted-foreground md:text-lg">
+                I take on a small number of product and infrastructure engagements
+                each quarter. If you have a problem that deserves attention, send a
+                note — I reply to everything.
+              </p>
+              <div className="mt-10 flex flex-wrap gap-3">
+                <Button asChild size="lg" className="rounded-full bg-foreground text-background hover:bg-foreground/90">
+                  <a href="mailto:frenzanu@gmail.com">
+                    frenzanu@gmail.com <IconArrowUpRight className="ml-1 h-4 w-4" />
+                  </a>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="btn-grad-border rounded-full bg-secondary/50">
+                  <a href="https://discord.com/users/1332010581913239653" target="_blank" rel="noreferrer noopener" aria-label="Discord">
+                    <IconMessageCircle className="mr-2 h-4 w-4" /> Discord DM
+                  </a>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="btn-grad-border rounded-full bg-secondary/50">
+                  <a href="https://instagram.com/waltharist" target="_blank" rel="noreferrer noopener" aria-label="Instagram">
+                    <IconInstagram className="mr-2 h-4 w-4" /> @waltharist
+                  </a>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="btn-grad-border rounded-full bg-secondary/50">
+                  <a href="https://github.com/waltharist" target="_blank" rel="noreferrer noopener" aria-label="GitHub">
+                    <IconGithub className="mr-2 h-4 w-4" /> github.com/waltharist
+                  </a>
+                </Button>
+              </div>
+            </div>
+          </section>
+
+          <footer className="border-t border-border/60 py-10">
+            <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-6 font-mono text-xs text-muted-foreground md:flex-row">
+              <span>© {new Date().getFullYear()} WALTH · crafted in the dark</span>
+              <span className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 animate-pulse-glow rounded-full bg-accent"></span>
+                system nominal
+              </span>
+            </div>
+          </footer>
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</body>
+</html>
